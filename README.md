@@ -13,6 +13,7 @@ in the following papers.
   【[project website](https://pluskid.github.io/structural-regularity/)】
                                                                                                                                                                                                               In addition to the pre-computed statistics released in the project website of each respective paper,
 we also release the model checkpoints from those pre-trained models to facilitate future research.
+
 ## Dependencies
 
 This code depends on the following open source libraries
@@ -58,3 +59,7 @@ containing the following information of each experiment:
 
 In the file `demo.py`, we include some demo code showing how to construct models, load checkpoints,
 run the models for evaluation and cross check with the results found in `aux_arrays.npz`.
+
+## Disclaimer
+
+This is not an officially supported Google product.
