@@ -29,12 +29,6 @@ class Dataset(abc.ABC):
   def num_classes(self):
     pass
 
-  @property
-  @abc.abstractmethod
-  def use_onehot_label(self):
-    """Indicate whether the labels are categorical or onehot."""
-    pass
-
   @abc.abstractmethod
   def get_num_examples(self, split_name):
     pass

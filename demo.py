@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """A demo script showing how to load and investigate checkpoints."""
+import glob
 import os
 
 import libarch
@@ -43,15 +44,12 @@ def load_checkpoint(model, checkpoint_dir):
   v_epoch = tf.Variable(0, dtype=tf.int64, name='epoch', trainable=False)
   v_gs = tf.Variable(0, dtype=tf.int64, name='global_step', trainable=False)
   checkpoint = tf.train.Checkpoint(model=model, epoch=v_epoch, global_step=v_gs)
-  checkpoint_manager = tf.train.CheckpointManager(
-      checkpoint=checkpoint, directory=checkpoint_dir, max_to_keep=5)
-  if checkpoint_manager.latest_checkpoint:
-    # use expect_partial to silence warnings related optimizer variables
-    checkpoint.restore(checkpoint_manager.latest_checkpoint).expect_partial()
-  else:
-    raise KeyError(f'No checkpoint found at {checkpoint_dir}')
-  return dict(epoch=int(v_epoch.numpy()), global_step=int(v_gs.numpy()),
-              path=checkpoint_manager.latest_checkpoint)
+  
+  ckpt_list = glob.glob(os.path.join(checkpoint_dir, 'ckpt-*.index'))
+  assert len(ckpt_list) == 1
+  ckpt_path = ckpt_list[0][:-6]
+  checkpoint.restore(ckpt_path).expect_partial()
+  return dict(epoch=int(v_epoch.numpy()), global_step=int(v_gs.numpy()), path=ckpt_path)
 
 
 def do_eval(model, dataset, split='test', batch_size=200):
