@@ -40,7 +40,8 @@ trained (with the heldout procedure) on a certain dataset. The files are organiz
   |     |     +-- aux_arrays.npz
   |     |     +-- checkpoints
   |     |           +-- <ckpt-epoch>
-  |     +-- 1                                                                                                                                                                                                   |     +-- ...
+  |     +-- 1                                                                                                                                                                                                  
+  |     +-- ...
   +-- 0.2
   +-- ...
 ```
