@@ -28,8 +28,15 @@ This code depends on the following open source libraries
 The model checkpoints can be downloaded from Google Cloud Storage. You can download them with the
 [gsutil](https://cloud.google.com/storage/docs/gsutil) tool or directly via HTTP.
 
-- Inception models trained on CIFAR10, 239GB: [gs://gresearch/heldout-traing-checkpoints/cifar10-inception.tar.gz](http://storage.googleapis.com/gresearch/heldout-training-checkpoints/cifar10-inception.tar.gz)
+- Inception models trained on CIFAR10, 239GB: [gs://gresearch/heldout-training-checkpoints/cifar10-inception.tar.gz](http://storage.googleapis.com/gresearch/heldout-training-checkpoints/cifar10-inception.tar.gz)
+- Inception models trained on CIFAR100, 244GB: [gs://gresearch/heldout-training-checkpoints/cifar100-inception.tar.gz](http://storage.googleapis.com/gresearch/heldout-training-checkpoints/cifar100-inception.tar.gz)
 
+The MD5 sum of the files are:
+
+```
+bc3b75203381709f8224810946be14b1  cifar10-inception.tar.gz
+f87218368528afa6e2407c8410f1ffa1  cifar100-inception.tar.gz
+```
 
 Each *experiment* consists of a collection of checkpoints for a certain neural network architecture 
 trained (with the heldout procedure) on a certain dataset. The files are organized in the following way:
