@@ -20,6 +20,7 @@ we also release the model checkpoints from those pre-trained models to facilitat
 This code depends on the following open source libraries
 
 * Tensorflow 2
+* [absl](https://pypi.org/project/absl-py/)
 * [Tensorflow Datasets](https://www.tensorflow.org/datasets)
 * [Sonnet](https://github.com/deepmind/sonnet)
 
@@ -30,12 +31,14 @@ The model checkpoints can be downloaded from Google Cloud Storage. You can downl
 
 - Inception models trained on CIFAR10, 239GB: [gs://gresearch/heldout-training-checkpoints/cifar10-inception.tar.gz](http://storage.googleapis.com/gresearch/heldout-training-checkpoints/cifar10-inception.tar.gz)
 - Inception models trained on CIFAR100, 244GB: [gs://gresearch/heldout-training-checkpoints/cifar100-inception.tar.gz](http://storage.googleapis.com/gresearch/heldout-training-checkpoints/cifar100-inception.tar.gz)
+- Resnet50 models trained on ImageNet, 367GB: [gs://gresearch/heldout-training-checkpoints/imagenet-resnet50.tar.gz](http://storage.googleapis.com/gresearch/heldout-training-checkpoints/imagenet-resnet50.tar.gz)
 
 The MD5 sum of the files are:
 
 ```
 bc3b75203381709f8224810946be14b1  cifar10-inception.tar.gz
 f87218368528afa6e2407c8410f1ffa1  cifar100-inception.tar.gz
+64c39ef7702462b83959af9de622b4b8  imagenet-resnet50.tar.gz
 ```
 
 Each *experiment* consists of a collection of checkpoints for a certain neural network architecture 
@@ -72,8 +75,14 @@ containing the following information of each experiment:
 
 ## Code Demo
 
+### Code for loading and inspecting checkpoints
+
 In the file `demo.py`, we include some demo code showing how to construct models, load checkpoints,
 run the models for evaluation and cross check with the results found in `aux_arrays.npz`.
+
+### Code used for training
+
+Coming later...
 
 ## Disclaimer
 

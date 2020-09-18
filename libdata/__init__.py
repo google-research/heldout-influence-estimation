@@ -15,5 +15,6 @@
 """Datasets."""
 
 from . import base
+from . import indexed_tfrecords
 from . import numpy
 from . import tfds

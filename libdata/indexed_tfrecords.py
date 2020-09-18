@@ -16,7 +16,6 @@
 
 from __future__ import absolute_import
 from __future__ import division
-from __future__ import google_type_annotations
 from __future__ import print_function
 
 from . import base
@@ -24,7 +23,7 @@ from . import imagenet_preprocessing
 
 from absl import logging
 
-import tensorflow.compat.v2 as tf
+import tensorflow as tf
 
 
 _SHUFFLE_BUFFER = 10000
@@ -47,9 +46,9 @@ PREDEFINED_DATA = {
         'num_classes': 1000,
         'num_examples': {'train': 1281167, 'test': 50000},
         'filenames': {
-            'train': [f'/path/to/imagenet-indexed/train-{i:05d}-of-01024'
+            'train': [f'imagenet-data/train-{i:05d}-of-01024'
                       for i in range(1024)],
-            'test': [f'/path/to/imagenet-indexed/validation-{i:05d}-of-00128'
+            'test': [f'imagenet-data/validation-{i:05d}-of-00128'
                      for i in range(128)]
         },
         'feature_names': {

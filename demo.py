@@ -20,6 +20,7 @@ import libdata
 import libutil
 
 import numpy as np
+import sonnet as snt
 import tensorflow as tf
 
 
@@ -97,5 +98,56 @@ def cifar10_demo(model_dir, arch='inception.SmallInception', split='test'):
   assert np.all(oc1 == oc2)
 
 
+def imagenet_demo(model_dir, arch='resnet_sonnet.ResNet50', split='test'):
+  """Demo for ImageNet."""
+  # NOTE:
+  # We use a ImageNet dataset in tfrecord format to train the models. Due to 
+  # copyright issue with ImageNet, we cannot release this tfrecord file. So
+  # it is unlikely that you will be able to directly run this code. But we 
+  # nonetheless provide the relevant code for your reference (e.g. what 
+  # data preprocess procedures are used). In order to run this code, you can:
+  # 1. build tfrecord file yourself and use the indexed_tfrecords data loader.
+  # 2. use your own ImageNet data loader, and match the data preprocessing 
+  #    parameters that we used.
+  #
+  # If you want to cross check the pre-computed results in `aux_arrays.npz` 
+  # as the code below does, you will need to know the exact order / index
+  # of examples in our original tfrecord file. We provide the filename 
+  # to index mapping at https://pluskid.github.io/influence-memorization/
+  # (look for 'ImageNet index'), to help to reconstruct this mapping.
+  # For example, if you want to know which subset of examples are used to
+  # train each particular model, then correct indexing is needed.
+  #
+  # Otherwise, you can choose arbitrary example order when constructing your
+  # data pipeline.
+  dataset = load_data('imagenet', provider='indexed_tfrecords.IndexedImageDataset')
+  aux_arrays = np.load(os.path.join(model_dir, 'aux_arrays.npz'))
+  subsample_tr_idx = aux_arrays['subsample_idx']
+
+  model = build_model(dataset.num_classes, arch)
+  load_results = load_checkpoint(model, os.path.join(model_dir, 'checkpoints'))
+
+  print(f'Loaded from checkpoint (epoch={load_results["epoch"]}, ' +
+        f'global_step={load_results["global_step"]}) trained from a random ' +
+        f'{len(subsample_tr_idx)/dataset.get_num_examples("train")*100:.0f}%' +
+        ' subset of training examples.')
+
+  results = do_eval(model, dataset, split=split)
+  print(f'Eval accuracy on {split} = {np.mean(results["correctness"]):.4f}')
+
+  def ordered_correctness(correctness, index):
+    new_correctness = np.zeros_like(correctness)
+    new_correctness[index] = correctness
+    return new_correctness
+
+  # make sure the evaluation correctness matches the exported result
+  oc1 = ordered_correctness(results['correctness'], results['index'])
+  oc2 = ordered_correctness(aux_arrays[f'correctness_{split}'],
+                            aux_arrays[f'index_{split}'])
+  n_match = np.sum(oc1 == oc2)
+  print(f'{n_match} out of {len(oc1)} predictions matches')
+
+
 if __name__ == '__main__':
-  cifar10_demo('/path/to/individual/run')
+  cifar10_demo('/path/cifar10-inception/0.5/123')
+  # imagenet_demo('/path/imagenet-resnet50/0.7/123')
