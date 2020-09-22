@@ -1,4 +1,4 @@
-# Heldout Training Checkpoints
+# Heldout Influence Estimation
 
 This repository contains code to load and inspect the models trained with a random heldout
 subset of the training set. The predictions of those models can be used to estimate useful
