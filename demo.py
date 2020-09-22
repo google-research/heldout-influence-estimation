@@ -23,6 +23,8 @@ import numpy as np
 import sonnet as snt
 import tensorflow as tf
 
+from tqdm import tqdm
+
 
 def load_data(name, provider='tfds.TFDSImagesNumpy', kwargs=None):
   """Load dataset."""
@@ -57,8 +59,9 @@ def do_eval(model, dataset, split='test', batch_size=200):
   """Evaluation a model on a given dataset."""
   correctness_all = []
   index_all = []
-  for inputs in dataset.iterate(split, batch_size,
-                                shuffle=False, augmentation=False):
+  for inputs in tqdm(
+      dataset.iterate(split, batch_size, shuffle=False, augmentation=False),
+      total=int(dataset.get_num_examples(split) / batch_size)):
     predictions = model(inputs['image'], is_training=False)
     correctness_all.append(tf.equal(tf.argmax(predictions, axis=1),
                                     inputs['label']).numpy())
@@ -70,9 +73,7 @@ def do_eval(model, dataset, split='test', batch_size=200):
   return dict(correctness=correctness_all, index=index_all)
 
 
-def cifar10_demo(model_dir, arch='inception.SmallInception', split='test'):
-  """Demo for CIFAR-10."""
-  dataset = load_data('cifar10:3.0.2')
+def run_demo(model_dir, arch, dataset, split):
   model = build_model(dataset.num_classes, arch)
   load_results = load_checkpoint(model, os.path.join(model_dir, 'checkpoints'))
 
@@ -93,9 +94,24 @@ def cifar10_demo(model_dir, arch='inception.SmallInception', split='test'):
 
   # make sure the evaluation correctness matches the exported result
   oc1 = ordered_correctness(results['correctness'], results['index'])
-  oc2 = ordered_correctness(aux_arrays[f'correctness_{split}'],
-                            aux_arrays[f'index_{split}'])
-  assert np.all(oc1 == oc2)
+
+  if split == 'train':
+    exported_correctness = np.concatenate(
+      [aux_arrays['correctness_train'], aux_arrays['correctness_removed']], axis=0)
+    exported_index = np.concatenate(
+      [aux_arrays['index_train'], aux_arrays['index_removed']], axis=0)
+  else:
+    exported_correctness = aux_arrays[f'correctness_{split}']
+    exported_index = aux_arrays[f'index_{split}']
+  oc2 = ordered_correctness(exported_correctness, exported_index)
+  n_match = np.sum(oc1 == oc2)
+  print(f'{n_match} out of {len(oc1)} predictions matches')
+
+
+def cifar10_demo(model_dir, arch='inception.SmallInception', split='test'):
+  """Demo for CIFAR-10."""
+  dataset = load_data('cifar10:3.0.2')
+  run_demo(model_dir, arch, dataset, split)
 
 
 def imagenet_demo(model_dir, arch='resnet_sonnet.ResNet50', split='test'):
@@ -121,31 +137,13 @@ def imagenet_demo(model_dir, arch='resnet_sonnet.ResNet50', split='test'):
   # Otherwise, you can choose arbitrary example order when constructing your
   # data pipeline.
   dataset = load_data('imagenet', provider='indexed_tfrecords.IndexedImageDataset')
-  aux_arrays = np.load(os.path.join(model_dir, 'aux_arrays.npz'))
-  subsample_tr_idx = aux_arrays['subsample_idx']
 
-  model = build_model(dataset.num_classes, arch)
-  load_results = load_checkpoint(model, os.path.join(model_dir, 'checkpoints'))
-
-  print(f'Loaded from checkpoint (epoch={load_results["epoch"]}, ' +
-        f'global_step={load_results["global_step"]}) trained from a random ' +
-        f'{len(subsample_tr_idx)/dataset.get_num_examples("train")*100:.0f}%' +
-        ' subset of training examples.')
-
-  results = do_eval(model, dataset, split=split)
-  print(f'Eval accuracy on {split} = {np.mean(results["correctness"]):.4f}')
-
-  def ordered_correctness(correctness, index):
-    new_correctness = np.zeros_like(correctness)
-    new_correctness[index] = correctness
-    return new_correctness
-
-  # make sure the evaluation correctness matches the exported result
-  oc1 = ordered_correctness(results['correctness'], results['index'])
-  oc2 = ordered_correctness(aux_arrays[f'correctness_{split}'],
-                            aux_arrays[f'index_{split}'])
-  n_match = np.sum(oc1 == oc2)
-  print(f'{n_match} out of {len(oc1)} predictions matches')
+  # NOTE: You should see that the prediction from saved model matches with the
+  # exported prediction results. If there are (only) a few mismatches, this
+  # is likely due to minor differences in the dataset building procedures.
+  # The script provided in tools/imagenet-tfrecords-builder does some extra
+  # processing (e.g. converting from CYMK to RGB for some of the images). 
+  run_demo(model_dir, arch, dataset, split)
 
 
 if __name__ == '__main__':
