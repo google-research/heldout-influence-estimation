@@ -41,7 +41,7 @@ f87218368528afa6e2407c8410f1ffa1  cifar100-inception.tar.gz
 64c39ef7702462b83959af9de622b4b8  imagenet-resnet50.tar.gz
 ```
 
-Each *experiment* consists of a collection of checkpoints for a certain neural network architecture 
+Each *experiment* consists of a collection of checkpoints for a certain neural network architecture
 trained (with the heldout procedure) on a certain dataset. The files are organized in the following way:
 
 ```
@@ -82,7 +82,9 @@ run the models for evaluation and cross check with the results found in `aux_arr
 
 ### Code used for training
 
-Coming later...
+In the [mnist-example](mnist-example) directory, we provide a self contained code example showing
+the whole pipeline of training with subsets of training examples, and estimating the influence and
+memorization based on the training statistics collected on multiple runs with different random subsets.
 
 ## Disclaimer
 
