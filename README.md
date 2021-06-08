@@ -6,10 +6,10 @@ statistics such as *memorization*, *influence*, and *consistency scores*, as dem
 in the following papers.
 
 * Vitaly Feldman*, Chiyuan Zhang*.
-  [What Neural Networks Memorize and Why: Discovering the Long Tail via Influence Estimation](https://arxiv.org/abs/2008.03703). *equal contribution. 2020.
+  [What Neural Networks Memorize and Why: Discovering the Long Tail via Influence Estimation](https://arxiv.org/abs/2008.03703). *equal contribution. NeurIPS 2020.
   ([project website](https://pluskid.github.io/influence-memorization/))
 * Ziheng Jiang*, Chiyuan Zhang*, Kunal Talwar, Michael C. Mozer.
-  [Characterizing Structural Regularities of Labeled Data in Overparameterized Models](https://arxiv.org/abs/2002.03206). *equal contribution. 2020.
+  [Characterizing Structural Regularities of Labeled Data in Overparameterized Models](https://arxiv.org/abs/2002.03206). *equal contribution. ICML 2021.
   ([project website](https://pluskid.github.io/structural-regularity/))
 
 In addition to the pre-computed statistics released in the project website of each respective paper,
